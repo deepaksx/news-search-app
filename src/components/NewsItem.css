@@ -18,6 +18,13 @@
   width: 100%;
   height: 200px;
   object-fit: cover;
+  display: block;
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+
+.news-item__image:hover {
+  opacity: 0.9;
 }
 
 .news-item__content {

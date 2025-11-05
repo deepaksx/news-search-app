@@ -20,12 +20,19 @@ const NewsItem = ({ article }) => {
 
   return (
     <article className="news-item">
-      <img
-        src={article.urlToImage || placeholderImage}
-        alt={article.title}
-        className="news-item__image"
-        onError={(e) => { e.target.src = placeholderImage; }}
-      />
+      <a
+        href={article.url}
+        target="_blank"
+        rel="noopener noreferrer"
+        aria-label={`Read full article: ${article.title}`}
+      >
+        <img
+          src={article.urlToImage || placeholderImage}
+          alt={article.title}
+          className="news-item__image"
+          onError={(e) => { e.target.src = placeholderImage; }}
+        />
+      </a>
       <div className="news-item__content">
         <h3 className="news-item__title">
           <a
