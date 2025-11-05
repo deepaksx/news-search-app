@@ -5,6 +5,8 @@
 
 const API_KEY = import.meta.env.VITE_NEWS_API_KEY;
 const BASE_URL = 'https://newsapi.org/v2';
+// CORS proxy to bypass NewsAPI.org's CORS restrictions on free tier
+const CORS_PROXY = 'https://api.allorigins.win/raw?url=';
 
 /**
  * Fetch top headlines from the last 24 hours
@@ -18,13 +20,10 @@ export const fetchTopHeadlines = async () => {
 
   try {
     // Note: 'from' parameter not available on free tier for top-headlines
-    const url = `${BASE_URL}/top-headlines?country=us&pageSize=10`;
+    const apiUrl = `${BASE_URL}/top-headlines?country=us&pageSize=10&apiKey=${API_KEY}`;
+    const url = `${CORS_PROXY}${encodeURIComponent(apiUrl)}`;
 
-    const response = await fetch(url, {
-      headers: {
-        'X-Api-Key': API_KEY,
-      },
-    });
+    const response = await fetch(url);
 
     // Handle HTTP errors
     if (!response.ok) {
@@ -77,13 +76,10 @@ export const fetchNews = async (topic) => {
   }
 
   try {
-    const url = `${BASE_URL}/everything?q=${encodeURIComponent(topic)}&pageSize=10&sortBy=publishedAt&language=en`;
+    const apiUrl = `${BASE_URL}/everything?q=${encodeURIComponent(topic)}&pageSize=10&sortBy=publishedAt&language=en&apiKey=${API_KEY}`;
+    const url = `${CORS_PROXY}${encodeURIComponent(apiUrl)}`;
 
-    const response = await fetch(url, {
-      headers: {
-        'X-Api-Key': API_KEY,
-      },
-    });
+    const response = await fetch(url);
 
     // Handle HTTP errors
     if (!response.ok) {
