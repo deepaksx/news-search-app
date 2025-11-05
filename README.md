@@ -264,3 +264,4 @@ This project is open source and available under the [MIT License](LICENSE).
 ---
 
 **Built as a learning project to master React, API integration, and CI/CD workflows.**
+# News Search App
