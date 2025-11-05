@@ -17,12 +17,8 @@ export const fetchTopHeadlines = async () => {
   }
 
   try {
-    // Get date from 24 hours ago
-    const yesterday = new Date();
-    yesterday.setDate(yesterday.getDate() - 1);
-    const from = yesterday.toISOString();
-
-    const url = `${BASE_URL}/top-headlines?country=us&pageSize=10&from=${from}`;
+    // Note: 'from' parameter not available on free tier for top-headlines
+    const url = `${BASE_URL}/top-headlines?country=us&pageSize=10`;
 
     const response = await fetch(url, {
       headers: {
