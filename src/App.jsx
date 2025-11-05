@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import SearchBar from './components/SearchBar';
 import NewsList from './components/NewsList';
-import { fetchNews } from './services/newsApi';
+import { fetchNews, fetchTopHeadlines } from './services/newsApi';
 import './App.css';
 
 function App() {
@@ -27,6 +27,23 @@ function App() {
     }
   };
 
+  const handleLucky = async () => {
+    // Reset state
+    setLoading(true);
+    setError(null);
+    setHasSearched(true);
+
+    try {
+      const results = await fetchTopHeadlines();
+      setArticles(results);
+    } catch (err) {
+      setError(err.message);
+      setArticles([]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <div className="app">
       <header className="app__header">
@@ -35,7 +52,7 @@ function App() {
       </header>
 
       <main className="app__main">
-        <SearchBar onSearch={handleSearch} />
+        <SearchBar onSearch={handleSearch} onLucky={handleLucky} />
 
         {hasSearched && (
           <NewsList
