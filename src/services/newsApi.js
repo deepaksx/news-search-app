@@ -1,12 +1,13 @@
 /**
  * News API Service
- * Handles all interactions with NewsAPI.org
+ * Handles all interactions with NewsAPI.org via serverless proxy
  */
 
-const API_KEY = import.meta.env.VITE_NEWS_API_KEY;
-const BASE_URL = 'https://newsapi.org/v2';
-// CORS proxy to bypass NewsAPI.org's CORS restrictions on free tier
-const CORS_PROXY = 'https://api.allorigins.win/raw?url=';
+// Use serverless function in production, direct API in development
+const isDev = import.meta.env.DEV;
+const API_BASE = isDev
+  ? 'https://newsapi.org/v2'  // Direct API in dev (with CORS issues)
+  : '/api/news';               // Serverless proxy in production
 
 /**
  * Fetch top headlines from the last 24 hours
@@ -14,14 +15,11 @@ const CORS_PROXY = 'https://api.allorigins.win/raw?url=';
  * @throws {Error} If API call fails or returns error
  */
 export const fetchTopHeadlines = async () => {
-  if (!API_KEY) {
-    throw new Error('API key is missing. Please configure VITE_NEWS_API_KEY in your .env file');
-  }
-
   try {
-    // Note: 'from' parameter not available on free tier for top-headlines
-    const apiUrl = `${BASE_URL}/top-headlines?country=us&pageSize=10&apiKey=${API_KEY}`;
-    const url = `${CORS_PROXY}${encodeURIComponent(apiUrl)}`;
+    // Build URL for serverless proxy or direct API
+    const url = isDev
+      ? `${API_BASE}/top-headlines?country=us&pageSize=10&apiKey=${import.meta.env.VITE_NEWS_API_KEY}`
+      : `${API_BASE}?endpoint=top-headlines&country=us&pageSize=10`;
 
     const response = await fetch(url);
 
@@ -67,17 +65,15 @@ export const fetchTopHeadlines = async () => {
  * @throws {Error} If API call fails or returns error
  */
 export const fetchNews = async (topic) => {
-  if (!API_KEY) {
-    throw new Error('API key is missing. Please configure VITE_NEWS_API_KEY in your .env file');
-  }
-
   if (!topic || topic.trim() === '') {
     throw new Error('Search topic cannot be empty');
   }
 
   try {
-    const apiUrl = `${BASE_URL}/everything?q=${encodeURIComponent(topic)}&pageSize=10&sortBy=publishedAt&language=en&apiKey=${API_KEY}`;
-    const url = `${CORS_PROXY}${encodeURIComponent(apiUrl)}`;
+    // Build URL for serverless proxy or direct API
+    const url = isDev
+      ? `${API_BASE}/everything?q=${encodeURIComponent(topic)}&pageSize=10&sortBy=publishedAt&language=en&apiKey=${import.meta.env.VITE_NEWS_API_KEY}`
+      : `${API_BASE}?endpoint=everything&q=${encodeURIComponent(topic)}&pageSize=10&sortBy=publishedAt&language=en`;
 
     const response = await fetch(url);
 
